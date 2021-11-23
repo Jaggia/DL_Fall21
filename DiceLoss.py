@@ -9,42 +9,18 @@ class DiceLoss(nn.Module):
         super(DiceLoss, self).__init__()
         self.eps = 1e-6
 
-    # https://kornia.readthedocs.io/en/v0.1.2/_modules/torchgeometry/losses/dice.html
-    # https://github.com/kevinzakka/pytorch-goodies/blob/master/losses.py
     def forward(self, inputs, targets):  # , smooth=1):
-        # comment out if your model contains a sigmoid or equivalent activation layer
-        # compute softmax over the classes axis
         # print(inputs)
         # print(inputs.shape)  # torch.Size([64, 41])
         # print(targets)
         # print(targets.shape)  # torch.Size([64])
+
+        # comment out for diff implementations
         # return self.kornia(inputs, targets)
         return self.dice_loss(targets, inputs)
-        # return self.ce_loss(targets, inputs)
-
-    def ce_loss(self, true, logits, weights=None, ignore=255):
-        """Computes the weighted multi-class cross-entropy loss.
-        Args:
-            true: a tensor of shape [B, 1, H, W].
-            logits: a tensor of shape [B, C, H, W]. Corresponds to
-                the raw output or logits of the model.
-            weight: a tensor of shape [C,]. The weights attributed
-                to each class.
-            ignore: the class index to ignore.
-        Returns:
-            ce_loss: the weighted multi-class cross-entropy loss.
-        """
-        true = true.unsqueeze(1).unsqueeze(-1).unsqueeze(-1)
-        logits = logits.unsqueeze(-1).unsqueeze(-1)
-        ce_loss = F.cross_entropy(
-            logits.float(),
-            true.long(),
-            ignore_index=ignore,
-            weight=weights,
-        )
-        return ce_loss
 
     def kornia(self, input, target):
+        # https://kornia.readthedocs.io/en/v0.1.2/_modules/torchgeometry/losses/dice.html
         """
         Shape:
         - Input: :math:`(N, C, H, W)` where C = number of classes.
@@ -68,7 +44,9 @@ class DiceLoss(nn.Module):
         return torch.mean(1. - dice_score)
 
     def dice_loss(self, true, logits, eps=1e-7):
-        """Computes the Sørensen–Dice loss.
+        # https://github.com/kevinzakka/pytorch-goodies/blob/master/losses.py
+        """
+        Computes the Sørensen–Dice loss.
         Note that PyTorch optimizers minimize a loss. In this
         case, we would like to maximize the dice loss so we
         return the negated dice loss.
