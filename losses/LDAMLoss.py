@@ -13,14 +13,15 @@ def focal_loss(input_values, gamma):
 
 
 class FocalLoss(nn.Module):
-    def __init__(self, weight=None, gamma=0.):
+    def __init__(self, weight=None, gamma=0., reduction='mean'):
         super(FocalLoss, self).__init__()
         assert gamma >= 0
         self.gamma = gamma
         self.weight = weight
+        self.reduction = reduction
 
     def forward(self, input, target):
-        return focal_loss(F.cross_entropy(input, target, reduction='none', weight=self.weight), self.gamma)
+        return focal_loss(F.cross_entropy(input, target, reduction=self.reduction, weight=self.weight), self.gamma)
 
 
 class LDAMLoss(nn.Module):
