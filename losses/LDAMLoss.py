@@ -14,6 +14,7 @@ def focal_loss(input_values, gamma):
 
 class FocalLoss(nn.Module):
     def __init__(self, weight=None, gamma=0., reduction='mean'):
+        # reduction can be 'mean', 'sum', or 'none'
         super(FocalLoss, self).__init__()
         assert gamma >= 0
         self.gamma = gamma
