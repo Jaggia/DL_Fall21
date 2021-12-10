@@ -27,45 +27,7 @@ class DiceLoss(nn.Module):
         # print(targets.shape)  # torch.Size([64])
 
         # comment out for diff implementations
-        # return self.kornia(inputs, targets)
-        return self.dice_loss(targets, inputs)
-
-    def class_avged(self, inputs, targets, smooth):
-        # comment out if your model contains a sigmoid or equivalent activation layer
-        inputs = F.sigmoid(inputs)
-        # flatten label and prediction tensors
-        inputs = inputs.view(inputs.shape[0], inputs.shape[1], -1)
-        targets = targets.view(targets.shape[0], targets.shape[1], -1)
-        # intersection = (inputs * targets).sum()
-        intersection = (inputs * targets).sum(0).sum(1)
-        # dice = (2.*intersection + smooth)/(inputs.sum() + targets.sum() + smooth)
-        dice = (2. * intersection + smooth) / (inputs.sum(0).sum(1) + targets.sum(0).sum(1) + smooth)
-
-        return 1 - dice.mean()
-
-    def kornia(self, input, target):
-        # https://kornia.readthedocs.io/en/v0.1.2/_modules/torchgeometry/losses/dice.html
-        """
-        Shape:
-        - Input: :math:`(N, C, H, W)` where C = number of classes.
-        - Target: :math:`(N, H, W)` where each value is
-          :math:`0 ≤ targets[i] ≤ C−1`.
-        """
-        input = input.unsqueeze(-1).unsqueeze(-1)
-        target = target.unsqueeze(-1).unsqueeze(-1)
-        # compute softmax over the classes axis
-        input_soft = F.softmax(input, dim=1)
-
-        # create the labels one hot tensor
-        target_one_hot = F.one_hot(target, num_classes=input.shape[1])
-
-        # compute the actual dice score
-        dims = (1, 2, 3)
-        intersection = torch.sum(input_soft * target_one_hot, dims)
-        cardinality = torch.sum(input_soft + target_one_hot, dims)
-
-        dice_score = 2. * intersection / (cardinality + self.eps)
-        return torch.mean(1. - dice_score)
+        return self.kornia(inputs, targets)
 
     def dice_loss(self, true, logits, eps=1e-7):
         # https://github.com/kevinzakka/pytorch-goodies/blob/master/losses.py
