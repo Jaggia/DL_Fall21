@@ -30,7 +30,9 @@ class DiceLoss(nn.Module):
         return self.kornia(inputs, targets)
 
     def kornia(self, input, target):
-        # https://kornia.readthedocs.io/en/v0.1.2/_modules/torchgeometry/losses/dice.html
+        # CITATION  :
+        # IMPLEMENTATION FROM :  https://kornia.readthedocs.io/en/v0.1.2/_modules/torchgeometry/losses/dice.html
+
         """
         Shape:
         - Input: :math:`(N, C, H, W)` where C = number of classes.

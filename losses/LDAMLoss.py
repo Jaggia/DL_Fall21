@@ -11,7 +11,8 @@ def focal_loss(input_values, gamma):
     loss = (1 - p) ** gamma * input_values
     return loss.mean()
 
-# https://github.com/kaidic/LDAM-DRW/blob/master/losses.py
+# CITATION  :
+# IMPLEMENTATION FROM :  https://github.com/kaidic/LDAM-DRW/blob/master/losses.py
 class FocalLoss(nn.Module):
     def __init__(self, weight=None, gamma=0., reduction='mean'):
         # reduction can be 'mean', 'sum', or 'none'
