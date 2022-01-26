@@ -1,2 +1,2 @@
-# DL_Fall21
+# NLP-News-Classification
 NLP Group Project 
